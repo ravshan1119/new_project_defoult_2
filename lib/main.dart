@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:new_project_defoult_2/ui/splesh/splesh_screen.dart';
 
-void main() {
+import 'local/storage_repostory.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await StorageRepository.getInstance();
+
   runApp(const App());
 }
 
@@ -11,9 +17,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-
-      ),
+      home: SpleshScreen(),
     );
   }
 }
