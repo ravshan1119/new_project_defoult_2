@@ -33,11 +33,22 @@ class _ProductsScreenState extends State<ProductsScreen> {
             ProductsContainer(
               image: AppImages.airpods,
               productModel: ProductModel(
-                  nomi: "Airpods", eski_narxi: "\$90", narxi: "\%110"),
+                  nomi: "Airpods", eski_narxi: "\$90", narxi: "\$110"),
               voidCallback: () {
                 if (StorageRepository.getBool("check") == true) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ResultScreen()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ResultScreen(
+                          image: AppImages.airpods,
+                          productModel: ProductModel(
+                              nomi: "Airpods",
+                              eski_narxi: "\$90",
+                              narxi: "\$110"),
+                          info:
+                              "Apple mahsuloti airpods rengi oq narxi tepada yozilgan."),
+                    ),
+                  );
                 } else {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => ProfileScreen()));
@@ -50,8 +61,18 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   ProductModel(nomi: "PC", eski_narxi: "\$450", narxi: "\%600"),
               voidCallback: () {
                 if (StorageRepository.getBool("check") == true) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ResultScreen()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ResultScreen(
+                            image: AppImages.pc,
+                            productModel: ProductModel(
+                                nomi: "PC",
+                                eski_narxi: "\$450",
+                                narxi: "\$600"),
+                            info:
+                                "Acer mahsuloti PC rengi oq narxi tepada yozilgan."),
+                      ));
                 } else {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => ProfileScreen()));
@@ -61,12 +82,21 @@ class _ProductsScreenState extends State<ProductsScreen> {
             ProductsContainer(
               image: AppImages.mac,
               productModel: ProductModel(
-                  nomi: "Mac", eski_narxi: "\$1000", narxi: "\%1100"),
+                  nomi: "Mac", eski_narxi: "\$1000", narxi: "\$1100"),
               voidCallback: () {
-
                 if (StorageRepository.getBool("check") == true) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ResultScreen()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ResultScreen(
+                            image: AppImages.mac,
+                            productModel: ProductModel(
+                                nomi: "Mac",
+                                eski_narxi: "\$1000",
+                                narxi: "\$1100"),
+                            info:
+                                "Apple mahsuloti Mac rengi oq narxi tepada yozilgan."),
+                      ));
                 } else {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => ProfileScreen()));
@@ -76,11 +106,21 @@ class _ProductsScreenState extends State<ProductsScreen> {
             ProductsContainer(
               image: AppImages.keyboardMouse,
               productModel: ProductModel(
-                  nomi: "oppo", eski_narxi: "\$90", narxi: "\%110"),
+                  nomi: "oppo", eski_narxi: "\$90", narxi: "\$110"),
               voidCallback: () {
                 if (StorageRepository.getBool("check") == true) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ResultScreen()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ResultScreen(
+                            image: AppImages.keyboardMouse,
+                            productModel: ProductModel(
+                                nomi: "oppo",
+                                eski_narxi: "\$90",
+                                narxi: "\$110"),
+                            info:
+                                "Oppo mahsuloti keyboardMouse rengi oq narxi tepada yozilgan."),
+                      ));
                 } else {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => ProfileScreen()));
@@ -90,11 +130,21 @@ class _ProductsScreenState extends State<ProductsScreen> {
             ProductsContainer(
               image: AppImages.iphone,
               productModel: ProductModel(
-                  nomi: "14 pro", eski_narxi: "\$1000", narxi: "\%1100"),
+                  nomi: "14 pro", eski_narxi: "\$1000", narxi: "\$1100"),
               voidCallback: () {
                 if (StorageRepository.getBool("check") == true) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ResultScreen()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ResultScreen(
+                            image: AppImages.iphone,
+                            productModel: ProductModel(
+                                nomi: "14 pro",
+                                eski_narxi: "\$1000",
+                                narxi: "\$1100"),
+                            info:
+                                "Oppo mahsuloti keyboardMouse rengi oq narxi tepada yozilgan."),
+                      ));
                 } else {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => ProfileScreen()));
@@ -104,11 +154,21 @@ class _ProductsScreenState extends State<ProductsScreen> {
             ProductsContainer(
               image: AppImages.speaker,
               productModel: ProductModel(
-                  nomi: "Speaker", eski_narxi: "\$90", narxi: "\%110"),
+                  nomi: "14 pro", eski_narxi: "\$1000", narxi: "\$1100"),
               voidCallback: () {
                 if (StorageRepository.getBool("check") == true) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ResultScreen()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ResultScreen(
+                            image: AppImages.speaker,
+                            productModel: ProductModel(
+                                nomi: "14 pro",
+                                eski_narxi: "\$1000",
+                                narxi: "\$1100"),
+                            info:
+                                "Oppo mahsuloti keyboardMouse rengi oq narxi tepada yozilgan."),
+                      ));
                 } else {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => ProfileScreen()));

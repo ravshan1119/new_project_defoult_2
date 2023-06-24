@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_project_defoult_2/local/storage_repostory.dart';
 import 'package:new_project_defoult_2/ui/favorite_screen.dart';
 import 'package:new_project_defoult_2/ui/products.dart';
 import 'package:new_project_defoult_2/ui/profile_screen.dart';
@@ -32,7 +33,13 @@ class _TabBarScreenState extends State<TabBarScreen> {
         currentIndex: currentIndex,
         onTap: (index) {
           setState(() {
-            currentIndex = index;
+            if (StorageRepository.getString("password").isEmpty) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return ProfileScreen();
+              }));
+            } else {
+              currentIndex = index;
+            }
           });
         },
         type: BottomNavigationBarType.fixed,

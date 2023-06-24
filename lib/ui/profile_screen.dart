@@ -52,9 +52,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ElevatedButton(
               onPressed: () {
                 setState(() {
-                  StorageRepository.putString("name", name);
-                  StorageRepository.putString("name", password);
-                  StorageRepository.putBool("check", true);
+                  if (name != "" && password != "") {
+                    StorageRepository.putString("name", name);
+                    StorageRepository.putString("password", password);
+                    StorageRepository.putBool("check", true);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Colors.indigoAccent,
+                        content: Text('Name yoki Password kiritilmagan!'),
+                      ),
+                    );
+                  }
                 });
               },
               child: Text("done")),
@@ -62,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: () {
                 setState(() {
                   StorageRepository.deleteString("name");
-                  StorageRepository.deleteString("name");
+                  StorageRepository.deleteString("password");
                   StorageRepository.deleteBool("check");
                 });
               },
