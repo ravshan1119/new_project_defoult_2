@@ -3,13 +3,13 @@ class ContactModelFields {
   static const String name = "name";
   static const String number = "number";
 
-  static const String contactTable = "toDos";
+  static const String contactTable = "contacts";
 }
 
 class ContactModelSql {
   int? id;
-  final String name;
-  final String number;
+  late final String name;
+  late final String number;
 
   ContactModelSql({
     this.id,

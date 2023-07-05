@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:new_project_defoult_2/data/local/db/local_database.dart';
+import 'package:new_project_defoult_2/models/contact_model_for_sql/contact_model_for_sql.dart';
 import 'package:new_project_defoult_2/utils/app_images.dart';
 
 import '../contacts/contacts_screen.dart';
 
 class ContactInfoScreen extends StatefulWidget {
-  ContactInfoScreen({Key? key}) : super(key: key);
+  ContactInfoScreen({Key? key, required this.contactModelSql}) : super(key: key);
+  final ContactModelSql contactModelSql;
   String name = "Bobur Mavlonov";
   String number = "+998 33 362 77 00";
 
@@ -75,10 +78,21 @@ class _ContactInfoScreenState extends State<ContactInfoScreen> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    SvgPicture.asset(
-                      AppImages.delete,
-                      height: 24.h,
-                      width: 24.h,
+                    GestureDetector(
+                      child: SvgPicture.asset(
+                        AppImages.delete,
+                        height: 24.h,
+                        width: 24.h,
+                      ),
+                      onTap: () {
+                        LocalDatabase.deleteContact(widget.contactModelSql.id!);
+                        setState(() {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ContactsScreen()));
+                        });
+                      },
                     ),
                     SizedBox(
                       height: 10.h,
@@ -112,7 +126,7 @@ class _ContactInfoScreenState extends State<ContactInfoScreen> {
           ),
           Center(
             child: Text(
-              widget.name,
+              widget.contactModelSql.name,
               style: TextStyle(
                 fontSize: 22.sp,
                 fontWeight: FontWeight.w700,
@@ -129,7 +143,7 @@ class _ContactInfoScreenState extends State<ContactInfoScreen> {
                 width: 15.w,
               ),
               Text(
-                widget.number,
+                widget.contactModelSql.number,
                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16.sp),
               ),
               SizedBox(
