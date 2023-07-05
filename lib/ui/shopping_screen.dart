@@ -3,13 +3,17 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:new_project_defoult_2/local/storage_repostory.dart';
 
 class ShoppingScreen extends StatefulWidget {
-  const ShoppingScreen({Key? key}) : super(key: key);
+   ShoppingScreen({Key? key}) : super(key: key);
+  String narxi = StorageRepository.getString("narxi");
+
 
   @override
   State<ShoppingScreen> createState() => _ShoppingScreenState();
 }
 
 class _ShoppingScreenState extends State<ShoppingScreen> {
+  int count = 1;
+
   @override
   void initState() {
     String image = StorageRepository.getString("image");
@@ -66,12 +70,34 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
         ),
         child: StorageRepository.getString("image").isNotEmpty
             ? ListTile(
-                title: Text(StorageRepository.getString("nomi")),
+                title: Row(
+                  children: [
+                    Text(
+                      StorageRepository.getString("nomi"),
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    Text('   count: $count'),
+                    IconButton(
+                        onPressed: () {
+                          count--;
+
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.remove)),
+                    IconButton(
+                        onPressed: () {
+                          count++;
+                          setState(() {
+                          });
+                        },
+                        icon: const Icon(Icons.add)),
+                  ],
+                ),
                 leading: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Image.asset(StorageRepository.getString("image")),
                 ),
-                trailing: Text(StorageRepository.getString("narxi")),
+                trailing: Text(widget.narxi),
               )
             : ListTile(),
       ),
