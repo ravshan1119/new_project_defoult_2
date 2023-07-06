@@ -18,6 +18,15 @@ class _ProductsScreenState extends State<ProductsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {
+
+              },
+              icon: Icon(
+                Icons.search,
+              ))
+        ],
         title: const Text("Products"),
         centerTitle: true,
         systemOverlayStyle:
