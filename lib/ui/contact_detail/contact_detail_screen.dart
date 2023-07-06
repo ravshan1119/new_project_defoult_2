@@ -3,22 +3,26 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:new_project_defoult_2/data/local/db/local_database.dart';
-import 'package:new_project_defoult_2/models/contact_model_for_sql/contact_model_for_sql.dart';
+import 'package:new_project_defoult_2/models/contact_model/contact_model.dart';
+import 'package:new_project_defoult_2/ui/app_routes.dart';
 import 'package:new_project_defoult_2/utils/app_images.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import '../contacts/contacts_screen.dart';
+class ContactDetailScreen extends StatefulWidget {
+  ContactDetailScreen(
+      {Key? key, required this.contactModelSql, required this.deleteListener})
+      : super(key: key);
+  String name = "";
+  String number = "";
 
-class ContactInfoScreen extends StatefulWidget {
-  ContactInfoScreen({Key? key, required this.contactModelSql}) : super(key: key);
   final ContactModelSql contactModelSql;
-  String name = "Bobur Mavlonov";
-  String number = "+998 33 362 77 00";
+  final VoidCallback deleteListener;
 
   @override
-  State<ContactInfoScreen> createState() => _ContactInfoScreenState();
+  State<ContactDetailScreen> createState() => _ContactDetailScreenState();
 }
 
-class _ContactInfoScreenState extends State<ContactInfoScreen> {
+class _ContactDetailScreenState extends State<ContactDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,8 +32,7 @@ class _ContactInfoScreenState extends State<ContactInfoScreen> {
         backgroundColor: Colors.white,
         leading: GestureDetector(
           onTap: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => ContactsScreen()));
+            Navigator.pushReplacementNamed(context, RouteNames.contacts);
           },
           child: const Icon(
             Icons.arrow_back_ios_new,
@@ -40,19 +43,6 @@ class _ContactInfoScreenState extends State<ContactInfoScreen> {
           "Contacts",
           style: TextStyle(color: Colors.black),
         ),
-        elevation: 0,
-        actions: [
-          const Icon(
-            Icons.search,
-            color: Colors.black,
-          ),
-          SizedBox(width: 10.w),
-          const Icon(
-            Icons.more_vert,
-            color: Colors.black,
-          ),
-          SizedBox(width: 10.w),
-        ],
       ),
       body: Column(
         children: [
@@ -84,14 +74,37 @@ class _ContactInfoScreenState extends State<ContactInfoScreen> {
                         height: 24.h,
                         width: 24.h,
                       ),
-                      onTap: () {
-                        LocalDatabase.deleteContact(widget.contactModelSql.id!);
-                        setState(() {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ContactsScreen()));
-                        });
+                      onTap: () async {
+                        showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                                  title: const Text('Do you want to delete the contact?'),
+                                  content:
+                                      const Text(''),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, 'Cancel'),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        int deletedId =
+                                            await LocalDatabase.deleteContact(
+                                                widget.contactModelSql.id!);
+                                        if (deletedId > 0) {
+                                          widget.deleteListener.call();
+                                          if (context.mounted) {
+                                            Navigator.pop(context);
+                                          }
+                                        }
+
+                                        Navigator.pop(context, 'OK');
+                                      },
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                ));
                       },
                     ),
                     SizedBox(
@@ -105,10 +118,15 @@ class _ContactInfoScreenState extends State<ContactInfoScreen> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    SvgPicture.asset(
-                      AppImages.edit,
-                      height: 24.h,
-                      width: 24.h,
+                    GestureDetector(
+                      child: SvgPicture.asset(
+                        AppImages.edit,
+                        height: 24.h,
+                        width: 24.h,
+                      ),
+                      onTap: () {
+                        Navigator.pushNamed(context, RouteNames.contactUpdate);
+                      },
                     ),
                     SizedBox(
                       height: 10.h,
@@ -143,24 +161,37 @@ class _ContactInfoScreenState extends State<ContactInfoScreen> {
                 width: 15.w,
               ),
               Text(
-                widget.contactModelSql.number,
+                widget.contactModelSql.phone,
                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16.sp),
               ),
               SizedBox(
                 width: 50.w,
               ),
-              Image.asset(
-                AppImages.phone,
-                height: 40.h,
-                width: 40.h,
+              GestureDetector(
+                onTap: () async {
+                  await launchUrl(
+                      Uri.parse("tel:${widget.contactModelSql.phone}"));
+                },
+                child: Image.asset(
+                  AppImages.phone,
+                  height: 40.h,
+                  width: 40.h,
+                ),
               ),
               SizedBox(
                 width: 15.w,
               ),
-              Image.asset(
-                AppImages.message,
-                height: 40.h,
-                width: 40.h,
+              GestureDetector(
+                onTap: () async {
+                  String sms = widget.contactModelSql.phone.replaceAll("+", "");
+                  print(sms);
+                  await launchUrl(Uri.parse("sms:$sms"));
+                },
+                child: Image.asset(
+                  AppImages.message,
+                  height: 40.h,
+                  width: 40.h,
+                ),
               ),
               SizedBox(
                 width: 15.w,
@@ -175,7 +206,7 @@ class _ContactInfoScreenState extends State<ContactInfoScreen> {
               SizedBox(
                 width: 15.w,
               ),
-              Text(
+              const Text(
                 "call history",
                 style: TextStyle(color: Colors.grey),
               )

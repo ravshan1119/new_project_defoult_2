@@ -1,20 +1,62 @@
-class ContactModel {
+class ContactModelFields {
+  static const String id = "_id";
+  static const String name = "name";
+  static const String phone = "phone";
+  static const String imagePath = "imagePath";
+
+  static const String contactsTable = "my_contacts";
+}
+
+class ContactModelSql {
+  int? id;
   final String name;
-  final String number;
-  final int id;
+  final String phone;
+  final String imagePath;
 
-  ContactModel({required this.number, required this.name, required this.id});
+  ContactModelSql({
+    this.id,
+    required this.phone,
+    required this.name,
+    required this.imagePath,
+  });
 
-  ContactModel copyWith(String? name, String? number, int? id) {
-    return ContactModel(
-        id: id ?? this.id,
-        number: number ?? this.number,
-        name: name ?? this.name);
+  ContactModelSql copyWith({
+    String? name,
+    String? phone,
+    String? imagePath,
+    int? id,
+  }) {
+    return ContactModelSql(
+      name: name ?? this.name,
+      phone: phone ?? this.phone,
+      imagePath: imagePath ?? this.imagePath,
+      id: id ?? this.id,
+    );
   }
 
-  String canAddThis() {
-    if (name.isEmpty) return "Ism kiriting";
-    if (number.isEmpty) return "Nomer kiriting";
-    return "";
+  factory ContactModelSql.fromJson(Map<String, dynamic> json) {
+    return ContactModelSql(
+      name: json[ContactModelFields.name] ?? "",
+      phone: json[ContactModelFields.phone] ?? "",
+      imagePath: json[ContactModelFields.imagePath] ?? "",
+      id: json[ContactModelFields.id] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      ContactModelFields.name: name,
+      ContactModelFields.phone: phone,
+    };
+  }
+
+  @override
+  String toString() {
+    return '''
+      name: $name
+      phone: $phone
+      imagePath: $imagePath
+      id: $id, 
+    ''';
   }
 }

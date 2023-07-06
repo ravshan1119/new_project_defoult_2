@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:new_project_defoult_2/data/local/db/local_database.dart';
+import 'package:new_project_defoult_2/models/contact_model/contact_model.dart';
 import 'package:new_project_defoult_2/ui/add/add_screen.dart';
+import 'package:new_project_defoult_2/ui/contact_detail/contact_detail_screen.dart';
 import 'package:new_project_defoult_2/ui/contacts/widgets/contact_search_view.dart';
 import 'package:new_project_defoult_2/ui/contacts/widgets/empty_screen.dart';
-import 'package:new_project_defoult_2/ui/contacts/widgets/existent_screen.dart';
 
-import '../../models/contact_model_for_sql/contact_model_for_sql.dart';
+import '../../utils/app_images.dart';
 
 class ContactsScreen extends StatefulWidget {
-  ContactsScreen({Key? key}) : super(key: key);
+  const ContactsScreen({Key? key}) : super(key: key);
 
   @override
   State<ContactsScreen> createState() => _ContactsScreenState();
@@ -42,6 +44,11 @@ class _ContactsScreenState extends State<ContactsScreen> {
     setState(() {});
   }
 
+  _getContactsByQuery(String query) async {
+    contacts = await LocalDatabase.getContactsByQuery(query);
+    setState(() {});
+  }
+
   @override
   void initState() {
     _update();
@@ -70,6 +77,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     suggestionList: allContacts.map((e) => e.name).toList(),
                   ),
                 );
+                if (searchText.isNotEmpty) _getContactsByQuery(searchText);
               },
               icon: const Icon(
                 Icons.search,
@@ -112,15 +120,56 @@ class _ContactsScreenState extends State<ContactsScreen> {
       ),
       body: contacts.isEmpty
           ? const EmptyScreen()
-          : ExistentScreen(
-              contacts: contacts,
+          : ListView(
+              physics: const BouncingScrollPhysics(),
+              children: [
+                ...List.generate(
+                  contacts.length,
+                  (index) => GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return ContactDetailScreen(
+                            contactModelSql: contacts[index],
+                            deleteListener: () {
+                              _update();
+                              setState(() {
+                                print(contacts[index].imagePath);
+                              });
+                            });
+                      }));
+                    },
+                    child: ListTile(
+                      title: Text(
+                        contacts[index].name,
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                      subtitle: Text(contacts[index].phone),
+                      leading: SizedBox(
+                        height: 50.h,
+                        width: 50.h,
+                        child: Image.asset(
+                          contacts[index].imagePath,
+                          height: 50.h,
+                          width: 50.h,
+                        ),
+                      ),
+                      trailing: SvgPicture.asset(
+                        AppImages.iconPhone,
+                        height: 24.h,
+                        width: 24.h,
+                      ),
+                    ),
+                  ),
+                )
+              ],
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => AddScreen(),
+              builder: (context) => AddContactScreen(listener: () {}),
             ),
           );
         },

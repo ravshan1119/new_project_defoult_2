@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:new_project_defoult_2/ui/add/widgets/images_user.dart';
-import 'package:new_project_defoult_2/ui/app_routes.dart';
-import 'package:new_project_defoult_2/ui/contacts/contacts_screen.dart';
-import 'package:zoom_tap_animation/zoom_tap_animation.dart';
+import 'package:new_project_defoult_2/models/contact_model/contact_model.dart';
 
 import '../../data/local/db/local_database.dart';
-import '../../models/contact_model/contact_model.dart';
-import '../../utils/app_images.dart';
+import '../contacts/contacts_screen.dart';
 
-class AddContactScreen extends StatefulWidget {
-  AddContactScreen({super.key, required this.listener});
+class UpdateContactScreen extends StatefulWidget {
+  UpdateContactScreen(
+      {super.key, required this.listener, required this.contactModelSql});
 
   final VoidCallback listener;
-  String imagePath = AppImages.icon1;
+  ContactModelSql contactModelSql;
 
   @override
-  State<AddContactScreen> createState() => _AddContactScreenState();
+  State<UpdateContactScreen> createState() => _UpdateContactScreenState();
 }
 
-class _AddContactScreenState extends State<AddContactScreen> {
+class _UpdateContactScreenState extends State<UpdateContactScreen> {
   var maskFormatter = MaskTextInputFormatter(
       mask: '(##) ### - ## - ##',
       filter: {"#": RegExp(r'[0-9]')},
@@ -44,21 +40,17 @@ class _AddContactScreenState extends State<AddContactScreen> {
                   phone = phone.replaceAll("(", "");
                   phone = phone.replaceAll(")", "");
                   phone = phone.replaceAll("-", "");
-
-                  ContactModelSql newContact =
-                      await LocalDatabase.insertContact(
-                    ContactModelSql(
-                      phone: "+998$phone",
-                      name: nameController.text,
-                      imagePath: widget.imagePath,
-                    ),
-                  );
-                  if ((newContact.id != null) && (newContact.id! > 0)) {
-                    if (context.mounted) {
-                      widget.listener.call();
-                      Navigator.pushReplacementNamed(
-                          context, RouteNames.contacts);
-                    }
+                  if (context.mounted) {
+                    LocalDatabase.updateContact(
+                        contactsModelSql: ContactModelSql(
+                            phone: phone,
+                            name: nameController.text,
+                            imagePath: widget.contactModelSql.imagePath));
+                    widget.listener.call();
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) {
+                      return ContactsScreen();
+                    }));
                   } else {}
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -84,8 +76,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
         backgroundColor: Colors.white,
         leading: IconButton(
           onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => ContactsScreen()));
+            Navigator.pop(context);
           },
           icon: const Icon(
             Icons.arrow_back,
@@ -93,7 +84,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
           ),
         ),
         title: const Text(
-          "Add contact",
+          "Edit contact",
           style: TextStyle(color: Colors.black),
         ),
       ),
@@ -101,22 +92,6 @@ class _AddContactScreenState extends State<AddContactScreen> {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            SizedBox(
-              height: 50.h,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  ...List.generate(usersIcon.length, (index) {
-                    return ZoomTapAnimation(onTap: (){
-                      widget.imagePath = usersIcon[index].imagePath;
-                    },child: usersIcon[index]);
-                  })
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 20.h,
-            ),
             TextField(
               textInputAction: TextInputAction.next,
               focusNode: nameFocusNode,
@@ -175,21 +150,3 @@ class _AddContactScreenState extends State<AddContactScreen> {
     );
   }
 }
-
-List<ImagesUser> usersIcon = [
-  ImagesUser(
-    imagePath: AppImages.icon1,
-  ),
-  ImagesUser(
-    imagePath: AppImages.icon2,
-  ),
-  ImagesUser(
-    imagePath: AppImages.icon3,
-  ),
-  ImagesUser(
-    imagePath: AppImages.icon4,
-  ),
-  ImagesUser(
-    imagePath: AppImages.icon5,
-  ),
-];

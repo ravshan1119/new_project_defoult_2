@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../../models/contact_model_for_sql/contact_model_for_sql.dart';
+import '../../../models/contact_model/contact_model.dart';
 
 class LocalDatabase {
   static final LocalDatabase getInstance = LocalDatabase._init();
@@ -36,10 +36,10 @@ class LocalDatabase {
     const intType = "INTEGER DEFAULT 0";
 
     await db.execute('''
-    CREATE TABLE ${ContactModelFields.contactTable} (
+    CREATE TABLE ${ContactModelFields.contactsTable} (
     ${ContactModelFields.id} $idType,
     ${ContactModelFields.name} $textType,
-    ${ContactModelFields.number} $textType
+    ${ContactModelFields.phone} $textType
     )
     ''');
 
@@ -50,14 +50,14 @@ class LocalDatabase {
       ContactModelSql contactsModelSql) async {
     final db = await getInstance.database;
     final int id = await db.insert(
-        ContactModelFields.contactTable, contactsModelSql.toJson());
+        ContactModelFields.contactsTable, contactsModelSql.toJson());
     return contactsModelSql.copyWith(id: id);
   }
 
   static Future<List<ContactModelSql>> getAllContacts() async {
     List<ContactModelSql> allToDos = [];
     final db = await getInstance.database;
-    allToDos = (await db.query(ContactModelFields.contactTable))
+    allToDos = (await db.query(ContactModelFields.contactsTable))
         .map((e) => ContactModelSql.fromJson(e))
         .toList();
 
@@ -67,7 +67,7 @@ class LocalDatabase {
   static updateContactName({required int id, required String name}) async {
     final db = await getInstance.database;
     db.update(
-      ContactModelFields.contactTable,
+      ContactModelFields.contactsTable,
       {ContactModelFields.name: name},
       where: "${ContactModelFields.id} = ?",
       whereArgs: [id],
@@ -77,27 +77,28 @@ class LocalDatabase {
   static updateContact({required ContactModelSql contactsModelSql}) async {
     final db = await getInstance.database;
     db.update(
-      ContactModelFields.contactTable,
+      ContactModelFields.contactsTable,
       contactsModelSql.toJson(),
       where: "${ContactModelFields.id} = ?",
       whereArgs: [contactsModelSql.id],
     );
   }
 
-  static deleteContact(int id) async {
+  static Future<int> deleteContact(int id) async {
     final db = await getInstance.database;
-    db.delete(
-      ContactModelFields.contactTable,
+    int count = await db.delete(
+      ContactModelFields.contactsTable,
       where: "${ContactModelFields.id} = ?",
       whereArgs: [id],
     );
+    return count;
   }
 
   static Future<List<ContactModelSql>> getContactsByLimit(int limit) async {
     List<ContactModelSql> allToDos = [];
     final db = await getInstance.database;
-    allToDos = (await db.query(ContactModelFields.contactTable,
-            limit: limit, orderBy: "${ContactModelFields.name} ASC"))
+    allToDos = (await db.query(ContactModelFields.contactsTable,
+        limit: limit, orderBy: "${ContactModelFields.name} ASC"))
         .map((e) => ContactModelSql.fromJson(e))
         .toList();
 
@@ -108,7 +109,7 @@ class LocalDatabase {
     List<ContactModelSql> contacts = [];
     final db = await getInstance.database;
     contacts = (await db.query(
-      ContactModelFields.contactTable,
+      ContactModelFields.contactsTable,
       where: "${ContactModelFields.id} = ?",
       whereArgs: [id],
     ))
@@ -120,16 +121,27 @@ class LocalDatabase {
     }
   }
 
-
   static Future<List<ContactModelSql>> getContactsByAlphabet(
       String order) async {
     List<ContactModelSql> allToDos = [];
     final db = await getInstance.database;
-    allToDos = (await db.query(ContactModelFields.contactTable,
+    allToDos = (await db.query(ContactModelFields.contactsTable,
         orderBy: "${ContactModelFields.name} $order"))
         .map((e) => ContactModelSql.fromJson(e))
         .toList();
     return allToDos;
   }
 
+  static Future<List<ContactModelSql>> getContactsByQuery(String query) async {
+    List<ContactModelSql> allToDos = [];
+    final db = await getInstance.database;
+    allToDos = (await db.query(
+      ContactModelFields.contactsTable,
+      where: "${ContactModelFields.name} LIKE ?",
+      whereArgs: [query],
+    ))
+        .map((e) => ContactModelSql.fromJson(e))
+        .toList();
+    return allToDos;
+  }
 }
